@@ -8,7 +8,8 @@ A personal web app that lists the birthdays of important people, highlights upco
 
 ### 2.1 App type: static PWA
 
-* Plain HTML, CSS and JavaScript. No framework, no build step. The app is small, and a build step adds tooling you do not need.
+* React with TypeScript, bundled by Vite. Netlify runs the build (`npm run build`) on each push.
+* `vite-plugin-pwa` generates the service worker and precaches the hashed build files.
 * A `manifest.webmanifest` plus a service worker makes Chrome on Android offer "Install app" / "Add to Home screen". The app then opens full screen with its own icon and works offline.
 * Netlify serves the files as a static site. Every `git push` to the main branch redeploys automatically.
 
@@ -30,7 +31,7 @@ Options compared:
 * It is a spreadsheet, so it gives you the "Excel" experience you asked for, and it can be exported to `.xlsx` any time.
 * You add or edit people in the Google Sheets app on your phone or in a browser. The website picks up changes on the next load (Google refreshes published CSVs within about 5 minutes).
 * The site reads the sheet through "File > Share > Publish to web > CSV". No API key, no server.
-* The service worker caches the last copy, so the app still works offline.
+* The app saves the last loaded copy in browser storage, so it still works offline.
 
 **Trade off you should accept knowingly:** a published sheet is readable by anyone who has the link. Names and birthdays are low sensitivity, but do not put phone numbers or addresses in it. If that is unacceptable, fall back to the browser storage option with Excel/CSV import and export for backups.
 
@@ -81,15 +82,19 @@ If later you want true push reminders, the smallest step is a Netlify Scheduled 
 
 ```
 /
-  index.html              App shell
-  styles.css              Styles
-  app.js                  Fetch CSV, parse, compute next birthday, render
-  config.js               SHEET_CSV_URL and SHEET_EDIT_URL
-  sw.js                   Service worker (offline cache)
-  manifest.webmanifest    PWA manifest (name, icons, colors)
-  icons/                  192x192 and 512x512 PNG icons, plus a maskable icon
-  netlify.toml            Headers (no cache on sw.js)
-  PLAN.md                 This file
+  index.html                  HTML entry
+  src/main.tsx                React entry, registers the service worker
+  src/App.tsx                 Layout: header, search, Today / Next 30 days / Later
+  src/components/BirthdayCard.tsx
+  src/useBirthdays.ts         Fetch the CSV, offline fallback, refresh on resume
+  src/lib/csv.ts              CSV parser
+  src/lib/birthdays.ts        Date parsing, next birthday, age, sorting
+  src/lib/birthdays.test.ts   Unit tests (Vitest)
+  src/config.ts               Sheet links (or Netlify env variables)
+  src/styles.css              Styles, light and dark
+  public/                     favicon, PWA icons, sample.csv
+  vite.config.ts              Vite + PWA manifest
+  netlify.toml                Build settings and headers
 ```
 
 ## 5. Implementation steps
@@ -112,8 +117,9 @@ If later you want true push reminders, the smallest step is a Netlify Scheduled 
 2. Open the Birthday app on your phone. Within a few minutes it shows the change.
 3. No redeploy needed for data changes. Redeploys happen only when the app's code changes.
 
-## 7. Decisions needed from you
+## 7. Decisions made
 
-1. Confirm Google Sheet as storage, or choose browser storage with Excel import/export if you do not want the list readable by anyone with the link.
-2. App name and accent color for the home screen icon.
-3. Whether the Google Calendar link (reliable reminders) should be in version 1.
+1. Storage: Google Sheet published as CSV.
+2. Name: Birthday Book. Accent color: coral `#E8505B`. Icon: a two tier cake.
+3. Google Calendar link: not in version 1.
+4. Stack: React and TypeScript.
