@@ -19,7 +19,7 @@ Excel is a reasonable instinct but a poor fit here, for a concrete reason: a sta
 Options compared:
 
 | Option | Edit from phone | Same data on all devices | Needs a server | Effort |
-| --- | --- | --- | --- | --- |
+|-|-|-|-|-|
 | Excel/CSV file in the repo | Poor (edit file, push, redeploy) | Yes | No | Low |
 | Browser storage only (IndexedDB) | Good, inside the app | No, each device has its own copy | No | Low |
 | **Google Sheet published as CSV** | **Good, via the Google Sheets app** | **Yes** | **No (Google hosts it)** | **Low** |
@@ -39,7 +39,7 @@ Options compared:
 One row per person:
 
 | name | birth_date | relation | notes |
-| --- | --- | --- | --- |
+|-|-|-|-|
 | Asha Sharma | 1995-03-14 | Friend | Likes books |
 | Ravi Kumar | 0000-11-21 | Colleague | Year unknown |
 
