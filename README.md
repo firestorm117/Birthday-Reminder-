@@ -1,5 +1,7 @@
 # Birthday Book
 
+Live at **https://impbirthdays.netlify.app**
+
 A personal birthday list that installs on Android like an app. Built with React, TypeScript and Vite as a static Progressive Web App. Data lives in a Google Sheet, so there is no server.
 
 ## 1. Set up the Google Sheet
@@ -22,7 +24,9 @@ Either paste the links into `src/config.ts`, or (better) set them in Netlify und
 * `VITE_SHEET_CSV_URL`: the Publish to web CSV link
 * `VITE_SHEET_EDIT_URL`: the normal sheet link (shows an "Edit" button in the app)
 
-Trigger a redeploy after adding them. Until the CSV link is set, the app shows sample data.
+Trigger a redeploy after adding them (Deploys > Trigger deploy > Deploy site). Until the CSV link is set, the app shows sample data.
+
+Keep the sheet's own sharing set to **Restricted**. The edit link is built into the public site, so link sharing with edit rights would let anyone change your list. Publish to web is separate and keeps working.
 
 ## 3. Deploy on Netlify
 
