@@ -70,11 +70,31 @@ export function parseBirthDate(
   return { year, month, day };
 }
 
+/**
+ * Title cases a name: "asha SHARMA" becomes "Asha Sharma".
+ * Words with mixed case (like "McDonald") are left alone, since they were
+ * typed that way on purpose. Hyphenated and apostrophe parts are capitalised
+ * too: "mary-jane o'neil" becomes "Mary-Jane O'Neil".
+ */
+export function toTitleCase(name: string): string {
+  return name
+    .trim()
+    .split(/\s+/)
+    .map((word) => {
+      const mixed = word !== word.toLowerCase() && word !== word.toUpperCase();
+      if (mixed) return word;
+      return word
+        .toLowerCase()
+        .replace(/(^|[-'\u2019])(\p{L})/gu, (_m, sep: string, ch: string) => sep + ch.toUpperCase());
+    })
+    .join(" ");
+}
+
 export function parsePeople(csvText: string): ParseResult {
   const people: Person[] = [];
   const skipped: string[] = [];
   csvToRecords(csvText).forEach((rec, idx) => {
-    const name = rec["name"] ?? "";
+    const name = toTitleCase(rec["name"] ?? "");
     const date = parseBirthDate(rec["birth_date"] ?? "");
     if (!name || !date) {
       skipped.push(name || `row ${idx + 2}`);

@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { groupByMonth, nextBirthday, parseBirthDate, parsePeople, sortByNext } from "./birthdays";
+import {
+  groupByMonth,
+  nextBirthday,
+  parseBirthDate,
+  parsePeople,
+  sortByNext,
+  toTitleCase,
+} from "./birthdays";
 import { parseCsv } from "./csv";
 
 describe("parseCsv", () => {
@@ -128,5 +135,23 @@ describe("groupByMonth", () => {
     expect(names(g.thisMonth)).toEqual(["LateDec"]);
     expect(names(g.nextMonth)).toEqual(["Jan"]);
     expect(names(g.later)).toEqual(["Feb"]);
+  });
+});
+
+describe("toTitleCase", () => {
+  it("capitalises lower and upper case names", () => {
+    expect(toTitleCase("asha sharma")).toBe("Asha Sharma");
+    expect(toTitleCase("RAVI KUMAR")).toBe("Ravi Kumar");
+    expect(toTitleCase("  meera   iyer ")).toBe("Meera Iyer");
+  });
+  it("handles hyphens and apostrophes", () => {
+    expect(toTitleCase("mary-jane o'neil")).toBe("Mary-Jane O'Neil");
+  });
+  it("keeps deliberately mixed case words", () => {
+    expect(toTitleCase("ronald McDonald")).toBe("Ronald McDonald");
+  });
+  it("is applied when reading the sheet", () => {
+    const { people } = parsePeople("name,birth_date\nneha verma,09-07-1998");
+    expect(people[0]!.name).toBe("Neha Verma");
   });
 });
