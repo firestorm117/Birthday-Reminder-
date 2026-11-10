@@ -121,3 +121,30 @@ export function sortByNext(people: Person[], today: Date): UpcomingBirthday[] {
     .map((p) => nextBirthday(p, today))
     .sort((a, b) => a.daysUntil - b.daysUntil || a.name.localeCompare(b.name));
 }
+
+export interface MonthGroups {
+  thisMonth: UpcomingBirthday[];
+  nextMonth: UpcomingBirthday[];
+  later: UpcomingBirthday[];
+}
+
+/**
+ * Splits birthdays (already sorted by next occurrence) into the rest of this
+ * calendar month, next calendar month, and everything after. Birthdays earlier
+ * this month have already passed, so they fall into "later" (next year).
+ */
+export function groupByMonth(items: UpcomingBirthday[], today: Date): MonthGroups {
+  const y = today.getFullYear();
+  const m = today.getMonth();
+  const nextY = m === 11 ? y + 1 : y;
+  const nextM = (m + 1) % 12;
+  const groups: MonthGroups = { thisMonth: [], nextMonth: [], later: [] };
+  for (const b of items) {
+    const by = b.nextDate.getFullYear();
+    const bm = b.nextDate.getMonth();
+    if (by === y && bm === m) groups.thisMonth.push(b);
+    else if (by === nextY && bm === nextM) groups.nextMonth.push(b);
+    else groups.later.push(b);
+  }
+  return groups;
+}

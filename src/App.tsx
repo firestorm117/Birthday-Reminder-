@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { BirthdayCard } from "./components/BirthdayCard";
-import { SHEET_EDIT_URL, UPCOMING_DAYS, USING_SAMPLE_DATA } from "./config";
-import { sortByNext, type UpcomingBirthday } from "./lib/birthdays";
+import { SHEET_EDIT_URL, USING_SAMPLE_DATA } from "./config";
+import { groupByMonth, sortByNext, type UpcomingBirthday } from "./lib/birthdays";
 import { useBirthdays } from "./useBirthdays";
 
 function Section({ title, items }: { title: string; items: UpcomingBirthday[] }) {
@@ -20,6 +20,7 @@ function Section({ title, items }: { title: string; items: UpcomingBirthday[] })
   );
 }
 
+const monthFmt = new Intl.DateTimeFormat(undefined, { month: "long" });
 const timeFmt = new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" });
 
 export default function App() {
@@ -35,9 +36,10 @@ export default function App() {
     ? sorted.filter((b) => `${b.name} ${b.relation}`.toLowerCase().includes(q))
     : sorted;
 
-  const todays = visible.filter((b) => b.daysUntil === 0);
-  const upcoming = visible.filter((b) => b.daysUntil > 0 && b.daysUntil <= UPCOMING_DAYS);
-  const later = visible.filter((b) => b.daysUntil > UPCOMING_DAYS);
+  const today = new Date(todayKey);
+  const { thisMonth, nextMonth, later } = groupByMonth(visible, today);
+  const thisMonthName = monthFmt.format(today);
+  const nextMonthName = monthFmt.format(new Date(today.getFullYear(), today.getMonth() + 1, 1));
 
   return (
     <div className="app">
@@ -81,8 +83,8 @@ export default function App() {
       />
 
       <main>
-        <Section title="Today" items={todays} />
-        <Section title={`Next ${UPCOMING_DAYS} days`} items={upcoming} />
+        <Section title={`This month · ${thisMonthName}`} items={thisMonth} />
+        <Section title={`Next month · ${nextMonthName}`} items={nextMonth} />
         <Section title="Later" items={later} />
         {!loading && visible.length === 0 && !error && (
           <p className="empty">{q ? "No one matches that search." : "No birthdays yet."}</p>

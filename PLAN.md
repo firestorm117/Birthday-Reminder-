@@ -53,7 +53,7 @@ A serverless PWA cannot reliably send notifications while the app is closed. Rea
 
 What we will do instead:
 
-1. When you open the app, it shows "Today" and "Next 30 days" at the top, and fires a local notification if someone has a birthday today.
+1. When you open the app, it shows "This month" and "Next month" at the top, and fires a local notification if someone has a birthday today.
 2. Optional: an "Add to Google Calendar" link per person (a yearly recurring event). Google Calendar then handles reliable reminders with no server on our side. This is the dependable route.
 
 If later you want true push reminders, the smallest step is a Netlify Scheduled Function plus Web Push. That is a serverless function, not a server you manage, but it is extra work and out of scope for version 1.
@@ -62,7 +62,7 @@ If later you want true push reminders, the smallest step is a Netlify Scheduled 
 
 ### Version 1 (MVP)
 * Load birthdays from the published Google Sheet CSV.
-* Sections: Today, Upcoming (next 30 days), All (sorted by next occurrence).
+* Sections: This month, Next month, Later (sorted by next occurrence). Today's birthdays are highlighted.
 * Each card: name, date, days remaining, age they are turning, relation.
 * Search by name.
 * Installable on Android, works offline with the last cached data.
@@ -84,7 +84,7 @@ If later you want true push reminders, the smallest step is a Netlify Scheduled 
 /
   index.html                  HTML entry
   src/main.tsx                React entry, registers the service worker
-  src/App.tsx                 Layout: header, search, Today / Next 30 days / Later
+  src/App.tsx                 Layout: header, search, This month / Next month / Later
   src/components/BirthdayCard.tsx
   src/useBirthdays.ts         Fetch the CSV, offline fallback, refresh on resume
   src/lib/csv.ts              CSV parser

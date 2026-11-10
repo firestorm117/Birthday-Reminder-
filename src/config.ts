@@ -14,6 +14,4 @@ export const SHEET_CSV_URL: string =
 
 export const SHEET_EDIT_URL: string = import.meta.env.VITE_SHEET_EDIT_URL || "";
 
-export const UPCOMING_DAYS = 30;
-
 export const USING_SAMPLE_DATA = SHEET_CSV_URL === "/sample.csv";

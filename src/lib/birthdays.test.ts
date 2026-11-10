@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { nextBirthday, parseBirthDate, parsePeople, sortByNext } from "./birthdays";
+import { groupByMonth, nextBirthday, parseBirthDate, parsePeople, sortByNext } from "./birthdays";
 import { parseCsv } from "./csv";
 
 describe("parseCsv", () => {
@@ -91,5 +91,42 @@ describe("parsePeople and sortByNext", () => {
     expect(skipped).toEqual(["Bad", "row 5"]);
     const sorted = sortByNext(people, new Date(2026, 10, 8));
     expect(sorted.map((p) => p.name)).toEqual(["Soon", "Later"]);
+  });
+});
+
+describe("groupByMonth", () => {
+  const names = (xs: { name: string }[]) => xs.map((x) => x.name);
+  const mk = (name: string, month: number, day: number) => ({
+    id: name,
+    name,
+    month,
+    day,
+    year: 1990,
+    relation: "",
+    notes: "",
+  });
+
+  it("splits into this month, next month and later", () => {
+    const today = new Date(2026, 10, 10); // 10 Nov 2026
+    const people = [
+      mk("TodayP", 11, 10),
+      mk("EndNov", 11, 30),
+      mk("PassedNov", 11, 3),
+      mk("Dec", 12, 1),
+      mk("Jan", 1, 5),
+    ];
+    const g = groupByMonth(sortByNext(people, today), today);
+    expect(names(g.thisMonth)).toEqual(["TodayP", "EndNov"]);
+    expect(names(g.nextMonth)).toEqual(["Dec"]);
+    expect(names(g.later)).toEqual(["Jan", "PassedNov"]);
+  });
+
+  it("treats January as next month in December", () => {
+    const today = new Date(2026, 11, 20); // 20 Dec 2026
+    const people = [mk("LateDec", 12, 25), mk("Jan", 1, 2), mk("Feb", 2, 1)];
+    const g = groupByMonth(sortByNext(people, today), today);
+    expect(names(g.thisMonth)).toEqual(["LateDec"]);
+    expect(names(g.nextMonth)).toEqual(["Jan"]);
+    expect(names(g.later)).toEqual(["Feb"]);
   });
 });
