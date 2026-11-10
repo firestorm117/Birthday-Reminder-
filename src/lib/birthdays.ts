@@ -32,28 +32,37 @@ function daysInMonth(y: number, m: number): number {
 }
 
 /**
- * Accepts YYYY-MM-DD (use 0000 for an unknown year) or MM-DD.
+ * Accepted formats (separator can be "-", "/" or "."):
+ *   DD-MM-YYYY  day first, e.g. 14-03-1995
+ *   YYYY-MM-DD  year first, e.g. 1995-03-14
+ *   DD-MM       no year, e.g. 14-03
+ * Use 0000 as the year when it is unknown.
  * Returns null for anything else, so a typo never shows a wrong date.
  */
 export function parseBirthDate(
   raw: string,
 ): { year: number | null; month: number; day: number } | null {
   const s = raw.trim();
-  let m = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(s);
-  let year: number | null = null;
+  let y: number | null;
   let month: number;
   let day: number;
-  if (m) {
-    const y = Number(m[1]);
-    year = y === 0 ? null : y;
+  let m: RegExpExecArray | null;
+  if ((m = /^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/.exec(s))) {
+    y = Number(m[1]);
     month = Number(m[2]);
     day = Number(m[3]);
+  } else if ((m = /^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})$/.exec(s))) {
+    day = Number(m[1]);
+    month = Number(m[2]);
+    y = Number(m[3]);
+  } else if ((m = /^(\d{1,2})[-/.](\d{1,2})$/.exec(s))) {
+    day = Number(m[1]);
+    month = Number(m[2]);
+    y = null;
   } else {
-    m = /^(\d{1,2})-(\d{1,2})$/.exec(s);
-    if (!m) return null;
-    month = Number(m[1]);
-    day = Number(m[2]);
+    return null;
   }
+  const year = y === 0 ? null : y;
   if (month < 1 || month > 12 || day < 1) return null;
   // Validate against a leap year when the year is unknown so 29 Feb is allowed.
   const checkYear = year ?? 2000;

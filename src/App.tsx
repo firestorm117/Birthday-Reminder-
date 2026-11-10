@@ -90,7 +90,7 @@ export default function App() {
         {skipped.length > 0 && (
           <p className="skipped">
             Skipped {skipped.length} row{skipped.length === 1 ? "" : "s"} with a missing name or a
-            date not in YYYY-MM-DD form: {skipped.join(", ")}
+            date not in DD-MM-YYYY form: {skipped.join(", ")}
           </p>
         )}
       </main>

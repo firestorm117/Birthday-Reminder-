@@ -16,11 +16,19 @@ describe("parseBirthDate", () => {
   it("reads ISO dates and unknown years", () => {
     expect(parseBirthDate("1995-03-14")).toEqual({ year: 1995, month: 3, day: 14 });
     expect(parseBirthDate("0000-11-21")).toEqual({ year: null, month: 11, day: 21 });
-    expect(parseBirthDate("11-21")).toEqual({ year: null, month: 11, day: 21 });
+    expect(parseBirthDate("21-11")).toEqual({ year: null, month: 11, day: 21 });
+  });
+  it("reads day first dates with any separator", () => {
+    expect(parseBirthDate("14-03-1995")).toEqual({ year: 1995, month: 3, day: 14 });
+    expect(parseBirthDate("14/03/1995")).toEqual({ year: 1995, month: 3, day: 14 });
+    expect(parseBirthDate("4.3.1995")).toEqual({ year: 1995, month: 3, day: 4 });
+    expect(parseBirthDate("21-11-0000")).toEqual({ year: null, month: 11, day: 21 });
+    expect(parseBirthDate("29-02-2000")).toEqual({ year: 2000, month: 2, day: 29 });
   });
   it("rejects invalid or ambiguous dates", () => {
     expect(parseBirthDate("2001-02-29")).toBeNull();
-    expect(parseBirthDate("14/03/1995")).toBeNull();
+    expect(parseBirthDate("03/14/1995")).toBeNull(); // month first is not supported
+    expect(parseBirthDate("29-02-2001")).toBeNull();
     expect(parseBirthDate("1995-13-01")).toBeNull();
     expect(parseBirthDate("")).toBeNull();
   });
@@ -75,8 +83,8 @@ describe("parsePeople and sortByNext", () => {
     const csv = [
       "Name,Birth_Date,Relation,Notes",
       "Later,1990-01-05,Friend,",
-      "Soon,1990-11-10,Family,",
-      "Bad,05/01/1990,,",
+      "Soon,10-11-1990,Family,",
+      "Bad,1990/13/01,,",
       ",1990-01-01,,",
     ].join("\n");
     const { people, skipped } = parsePeople(csv);

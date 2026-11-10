@@ -10,10 +10,10 @@ A personal birthday list that installs on Android like an app. Built with React,
 
    | name | birth_date | relation | notes |
    |-|-|-|-|
-   | Asha Sharma | 1995-03-14 | Friend | Likes books |
-   | Ravi Kumar | 0000-11-21 | Colleague | Year unknown |
+   | Asha Sharma | 14-03-1995 | Friend | Likes books |
+   | Ravi Kumar | 21-11-0000 | Colleague | Year unknown |
 
-2. **Important:** select column B, then Format > Number > Plain text. Otherwise Google turns dates into your local format (for example 14/03/1995) and the app cannot tell day from month. Type dates as `YYYY-MM-DD`. Use `0000` as the year if you do not know it.
+2. **Important:** select column B, then Format > Number > Plain text. Otherwise Google may reformat the dates. Type dates **day first** as `DD-MM-YYYY` (for example `14-03-1995`); `/` or `.` also work, and so does `YYYY-MM-DD`. Use `0000` as the year if you do not know it. Month first (US style) dates are not supported.
 3. File > Share > Publish to web. Choose the sheet tab, choose **Comma separated values (.csv)**, click Publish and copy the link.
 4. Anyone with that link can read the sheet. Keep it to names and dates; do not add phone numbers or addresses.
 
