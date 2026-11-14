@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { BirthdayRow } from "./components/BirthdayRow";
+import { CalendarView } from "./components/CalendarView";
 import { LockScreen } from "./components/LockScreen";
 import { NextUp } from "./components/NextUp";
 import { SAMPLE_CSV_URL, SHEET_CONFIG, sheetRowLink } from "./config";
@@ -8,6 +9,17 @@ import { decryptConfig, type SheetConfig } from "./lib/lock";
 import { CSV_STORAGE_KEY, useBirthdays } from "./useBirthdays";
 
 const KEY_STORAGE_KEY = "birthday-book:key";
+const VIEW_STORAGE_KEY = "birthday-book:view";
+
+type View = "list" | "calendar";
+
+function readView(): View {
+  try {
+    return localStorage.getItem(VIEW_STORAGE_KEY) === "calendar" ? "calendar" : "list";
+  } catch {
+    return "list";
+  }
+}
 
 function readKey(): string | null {
   try {
@@ -102,6 +114,15 @@ function BirthdayList({
     sheet.csvUrl,
   );
   const [query, setQuery] = useState("");
+  const [view, setViewState] = useState<View>(readView);
+  const setView = (v: View) => {
+    setViewState(v);
+    try {
+      localStorage.setItem(VIEW_STORAGE_KEY, v);
+    } catch {
+      // remembering the tab is optional
+    }
+  };
   const usingSample = sheet.csvUrl === SAMPLE_CSV_URL;
 
   // Recomputed each render, so the day rolls over when the app is reopened.
@@ -145,39 +166,73 @@ function BirthdayList({
       )}
       {error && <p className="banner banner-error">Could not load birthdays: {error}</p>}
 
-      <input
-        className="search"
-        type="search"
-        placeholder="Search by name or relation"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        aria-label="Search"
-      />
+      <div className="tabs" role="tablist">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={view === "list"}
+          className={view === "list" ? "tab tab-on" : "tab"}
+          onClick={() => setView("list")}
+        >
+          List
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={view === "calendar"}
+          className={view === "calendar" ? "tab tab-on" : "tab"}
+          onClick={() => setView("calendar")}
+        >
+          Calendar
+        </button>
+      </div>
 
-      <main>
-        <NextUp items={nextUp} editHref={editHref} />
-        {groups.map((g) => (
-          <section key={g.key}>
-            <h2>
-              {g.title} <span className="group-count">{g.items.length}</span>
-            </h2>
-            <ul className="list">
-              {g.items.map((b) => (
-                <BirthdayRow key={b.id} b={b} editHref={editHref(b)} />
-              ))}
-            </ul>
-          </section>
-        ))}
-        {!loading && visible.length === 0 && !error && (
-          <p className="empty">{searching ? "No one matches that search." : "No birthdays yet."}</p>
-        )}
-        {skipped.length > 0 && (
-          <p className="skipped">
-            Skipped {skipped.length} row{skipped.length === 1 ? "" : "s"} with a missing name or a
-            date not in DD-MM-YYYY form: {skipped.join(", ")}
-          </p>
-        )}
-      </main>
+      {view === "calendar" ? (
+        <main>
+          <CalendarView
+            people={people}
+            sorted={sorted}
+            today={new Date(todayKey)}
+            editHref={editHref}
+          />
+        </main>
+      ) : (
+        <>
+        <input
+          className="search"
+          type="search"
+          placeholder="Search by name or relation"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          aria-label="Search"
+        />
+
+        <main>
+          <NextUp items={nextUp} editHref={editHref} />
+          {groups.map((g) => (
+            <section key={g.key}>
+              <h2>
+                {g.title} <span className="group-count">{g.items.length}</span>
+              </h2>
+              <ul className="list">
+                {g.items.map((b) => (
+                  <BirthdayRow key={b.id} b={b} editHref={editHref(b)} />
+                ))}
+              </ul>
+            </section>
+          ))}
+          {!loading && visible.length === 0 && !error && (
+            <p className="empty">{searching ? "No one matches that search." : "No birthdays yet."}</p>
+          )}
+          {skipped.length > 0 && (
+            <p className="skipped">
+              Skipped {skipped.length} row{skipped.length === 1 ? "" : "s"} with a missing name or a
+              date not in DD-MM-YYYY form: {skipped.join(", ")}
+            </p>
+          )}
+        </main>
+        </>
+      )}
 
       <footer className="footer">
         {updatedAt && (

@@ -185,3 +185,20 @@ describe("toTitleCase", () => {
     expect(people[0]!.name).toBe("Neha Verma");
   });
 });
+
+describe("calendar", () => {
+  it("builds Monday first weeks around the month", async () => {
+    const { monthGrid } = await import("./calendar");
+    const cells = monthGrid(2026, 10); // November 2026 starts on a Sunday
+    expect(cells.length % 7).toBe(0);
+    expect(cells[0]).toEqual({ year: 2026, month: 9, day: 26, inMonth: false });
+    expect(cells.filter((c) => c.inMonth).length).toBe(30);
+  });
+
+  it("puts 29 Feb on the 28th in non leap years", async () => {
+    const { birthdaysInMonth } = await import("./calendar");
+    const leap = { ...person(2, 29, 2000), id: "leap" };
+    expect([...birthdaysInMonth([leap], 2027, 1).keys()]).toEqual([28]);
+    expect([...birthdaysInMonth([leap], 2028, 1).keys()]).toEqual([29]);
+  });
+});

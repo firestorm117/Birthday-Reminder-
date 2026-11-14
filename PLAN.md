@@ -84,7 +84,8 @@ If later you want true push reminders, the smallest step is a Netlify Scheduled 
 /
   index.html                  HTML entry
   src/main.tsx                React entry, registers the service worker
-  src/App.tsx                 Layout: header, search, This month / Next month / Later
+  src/App.tsx                 Layout: header, List / Calendar switch, search, groups
+  src/components/CalendarView.tsx  Month grid with birthday dates
   src/components/BirthdayCard.tsx
   src/useBirthdays.ts         Fetch the CSV, offline fallback, refresh on resume
   src/lib/csv.ts              CSV parser

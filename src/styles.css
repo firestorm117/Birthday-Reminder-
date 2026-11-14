@@ -410,3 +410,157 @@ h2 {
   height: 18px;
   accent-color: #fcee0a;
 }
+
+/* List / Calendar switch */
+
+.tabs {
+  display: flex;
+  margin: 0 0 12px;
+  border: 1px solid #2c2c22;
+}
+
+.tab {
+  flex: 1;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 10px;
+  font-family: ui-monospace, "JetBrains Mono", "Fira Code", "Roboto Mono", Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #9a9a8a;
+  cursor: pointer;
+}
+
+.tab-on {
+  background: #fcee0a;
+  color: #0b0b0c;
+}
+
+/* Calendar */
+
+.cal {
+  background: #141416;
+  border: 1px solid #2c2c22;
+  padding: 12px;
+  touch-action: pan-y;
+}
+
+.cal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.cal-title {
+  font-family: ui-monospace, "JetBrains Mono", "Fira Code", "Roboto Mono", Menlo, Consolas, monospace;
+  font-weight: 800;
+  color: #fcee0a;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(252, 238, 10, 0.35);
+}
+
+.cal-nav {
+  appearance: none;
+  width: 40px;
+  height: 36px;
+  border: 1px solid #2c2c22;
+  background: #1a1a10;
+  color: #fcee0a;
+  font: 800 1rem ui-monospace, Menlo, monospace;
+  cursor: pointer;
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  text-align: center;
+}
+
+.cal-dow {
+  color: #9a9a8a;
+  font: 700 0.65rem ui-monospace, Menlo, monospace;
+  padding-bottom: 4px;
+}
+
+.d {
+  position: relative;
+  appearance: none;
+  border: 1px solid transparent;
+  background: transparent;
+  padding: 9px 0 13px;
+  color: #f2f2ee;
+  font: 600 0.85rem ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
+  cursor: pointer;
+}
+
+.d-dim {
+  color: #3a3a33;
+  cursor: default;
+}
+
+.d-has {
+  background: #1f1f05;
+  color: #fcee0a;
+  font-weight: 800;
+}
+
+.d-has::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 4px;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  background: #fcee0a;
+}
+
+.d-near::after {
+  background: #ff9f1c;
+}
+
+.d-soon::after {
+  background: #ff003c;
+  box-shadow: 0 0 6px rgba(255, 0, 60, 0.8);
+}
+
+.d-today {
+  border-color: #00e5ff;
+  color: #00e5ff;
+}
+
+.d-sel {
+  background: #fcee0a;
+  color: #0b0b0c;
+}
+
+.d-sel::after {
+  background: #0b0b0c;
+  box-shadow: none;
+}
+
+.d-count {
+  position: absolute;
+  top: 1px;
+  right: 3px;
+  font-size: 0.55rem;
+  font-weight: 800;
+}
+
+.cal-today {
+  display: block;
+  margin: 10px auto 0;
+  font-size: 0.85rem;
+}
+
+.cal-empty {
+  margin: 0;
+  color: #9a9a8a;
+  font-size: 0.9rem;
+}

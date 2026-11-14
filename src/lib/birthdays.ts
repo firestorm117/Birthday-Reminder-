@@ -24,7 +24,7 @@ export interface ParseResult {
   lastRow: number; // last non blank row in the sheet, so "Add" can open the next one
 }
 
-const DAY_MS = 24 * 60 * 60 * 1000;
+export const DAY_MS = 24 * 60 * 60 * 1000;
 
 function isLeapYear(y: number): boolean {
   return (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
@@ -117,7 +117,7 @@ export function parsePeople(csvText: string): ParseResult {
 }
 
 /** The day of the birthday in a given year. 29 Feb falls on 28 Feb in non leap years. */
-function birthdayDayInYear(p: Person, year: number): number {
+export function birthdayDayInYear(p: Person, year: number): number {
   if (p.month === 2 && p.day === 29 && !isLeapYear(year)) return 28;
   return p.day;
 }
