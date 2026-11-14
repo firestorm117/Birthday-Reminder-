@@ -1,20 +1,22 @@
 import { describe, expect, it } from "vitest";
 import {
-  groupByMonth,
+  groupForDisplay,
   nextBirthday,
   parseBirthDate,
   parsePeople,
   sortByNext,
   toTitleCase,
+  urgency,
 } from "./birthdays";
 import { parseCsv } from "./csv";
 
 describe("parseCsv", () => {
-  it("handles quotes, commas and CRLF", () => {
+  it("handles quotes, commas and CRLF, keeping blank rows", () => {
     const rows = parseCsv('name,notes\r\n"Doe, Jane","says ""hi"""\r\n\r\n');
     expect(rows).toEqual([
       ["name", "notes"],
       ["Doe, Jane", 'says "hi"'],
+      [""],
     ]);
   });
 });
@@ -49,6 +51,7 @@ const person = (month: number, day: number, year: number | null = 1990) => ({
   year,
   relation: "",
   notes: "",
+  row: 2,
 });
 
 describe("nextBirthday", () => {
@@ -101,8 +104,9 @@ describe("parsePeople and sortByNext", () => {
   });
 });
 
-describe("groupByMonth", () => {
-  const names = (xs: { name: string }[]) => xs.map((x) => x.name);
+describe("groupForDisplay", () => {
+  const titles = (gs: { title: string; items: { name: string }[] }[]) =>
+    gs.map((g) => `${g.title}: ${g.items.map((i) => i.name).join(",")}`);
   const mk = (name: string, month: number, day: number) => ({
     id: name,
     name,
@@ -111,30 +115,56 @@ describe("groupByMonth", () => {
     year: 1990,
     relation: "",
     notes: "",
+    row: 2,
   });
 
-  it("splits into this month, next month and later", () => {
-    const today = new Date(2026, 10, 10); // 10 Nov 2026
+  it("groups into today, this week, this month and month headers", () => {
+    const today = new Date(2026, 10, 14); // 14 Nov 2026
     const people = [
-      mk("TodayP", 11, 10),
-      mk("EndNov", 11, 30),
-      mk("PassedNov", 11, 3),
-      mk("Dec", 12, 1),
+      mk("Today", 11, 14),
+      mk("Week", 11, 20),
+      mk("Month", 11, 28),
+      mk("Passed", 11, 3),
+      mk("Dec", 12, 25),
       mk("Jan", 1, 5),
+      mk("May", 5, 1),
     ];
-    const g = groupByMonth(sortByNext(people, today), today);
-    expect(names(g.thisMonth)).toEqual(["TodayP", "EndNov"]);
-    expect(names(g.nextMonth)).toEqual(["Dec"]);
-    expect(names(g.later)).toEqual(["Jan", "PassedNov"]);
+    const g = groupForDisplay(sortByNext(people, today), today);
+    expect(titles(g)).toEqual([
+      "Today: Today",
+      "This week: Week",
+      "This month: Month",
+      expect.stringMatching(/: Dec$/),
+      expect.stringMatching(/: Jan$/),
+      expect.stringMatching(/: May$/),
+      expect.stringMatching(/ 2027: Passed$/),
+    ]);
   });
 
-  it("treats January as next month in December", () => {
-    const today = new Date(2026, 11, 20); // 20 Dec 2026
-    const people = [mk("LateDec", 12, 25), mk("Jan", 1, 2), mk("Feb", 2, 1)];
-    const g = groupByMonth(sortByNext(people, today), today);
-    expect(names(g.thisMonth)).toEqual(["LateDec"]);
-    expect(names(g.nextMonth)).toEqual(["Jan"]);
-    expect(names(g.later)).toEqual(["Feb"]);
+  it("hides empty groups and lets this week cross into next month", () => {
+    const today = new Date(2026, 10, 28); // 28 Nov 2026
+    const g = groupForDisplay(sortByNext([mk("EarlyDec", 12, 2)], today), today);
+    expect(titles(g)).toEqual(["This week: EarlyDec"]);
+  });
+});
+
+describe("urgency", () => {
+  it("is soon under 7 days, near under 30, far otherwise", () => {
+    expect(urgency(0)).toBe("soon");
+    expect(urgency(6)).toBe("soon");
+    expect(urgency(7)).toBe("near");
+    expect(urgency(29)).toBe("near");
+    expect(urgency(30)).toBe("far");
+  });
+});
+
+describe("sheet rows", () => {
+  it("keeps sheet row numbers across blank rows", () => {
+    const { people, lastRow } = parsePeople(
+      "name,birth_date\nA,01-01-1990\n,\nB,02-02-1990\n\n",
+    );
+    expect(people.map((p) => p.row)).toEqual([2, 4]);
+    expect(lastRow).toBe(4);
   });
 });
 

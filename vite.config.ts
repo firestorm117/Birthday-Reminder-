@@ -1,8 +1,27 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
+import { encryptConfig } from "./src/lib/lock.ts";
 
-export default defineConfig({
+async function sheetConfig(mode: string) {
+  // Reads .env files and the real environment (Netlify sets the latter).
+  const env = loadEnv(mode, process.cwd(), "");
+  const csvUrl = env.VITE_SHEET_CSV_URL || "/sample.csv";
+  const editUrl = env.VITE_SHEET_EDIT_URL || "";
+  const password = env.APP_PASSWORD || "";
+  if (password) {
+    return { mode: "locked" as const, blob: await encryptConfig(password, { csvUrl, editUrl }) };
+  }
+  if (env.VITE_SHEET_CSV_URL) {
+    console.warn("APP_PASSWORD is not set: the site is open to anyone with its address.");
+  }
+  return { mode: "open" as const, csvUrl, editUrl };
+}
+
+export default defineConfig(async ({ mode }) => ({
+  define: {
+    __SHEET_CONFIG__: JSON.stringify(await sheetConfig(mode)),
+  },
   plugins: [
     react(),
     VitePWA({
@@ -34,4 +53,4 @@ export default defineConfig({
       },
     }),
   ],
-});
+}));

@@ -14,8 +14,10 @@ body {
 .app {
   max-width: 640px;
   margin: 0 auto;
-  padding: max(16px, env(safe-area-inset-top)) 16px 48px;
+  padding: max(16px, env(safe-area-inset-top)) 16px max(32px, env(safe-area-inset-bottom));
 }
+
+/* Header */
 
 .header {
   display: flex;
@@ -38,33 +40,40 @@ h1 {
   color: #7a6668;
 }
 
-.actions {
-  display: flex;
-  gap: 8px;
-}
-
 .btn {
   appearance: none;
-  border: 1px solid #e8505b;
+  display: inline-block;
+  border: 0;
   background: #e8505b;
   color: #fff;
   font: inherit;
-  font-size: 0.9rem;
-  font-weight: 600;
-  padding: 8px 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 10px 18px;
   border-radius: 999px;
   text-decoration: none;
   cursor: pointer;
-}
-
-.btn-ghost {
-  background: transparent;
-  color: #e8505b;
+  box-shadow: 0 2px 8px rgba(232, 80, 91, 0.3);
 }
 
 .btn:disabled {
-  opacity: 0.6;
+  opacity: 0.55;
   cursor: default;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.link-btn {
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: #e8505b;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .banner {
@@ -98,15 +107,85 @@ h1 {
   outline-offset: 1px;
 }
 
+/* Next up card */
+
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 12px 0 8px;
+  padding: 20px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #e8505b, #f08a6c);
+  color: #fff;
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(232, 80, 91, 0.28);
+}
+
+.hero-text {
+  min-width: 0;
+}
+
+.hero-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.85;
+}
+
+.hero-name {
+  margin-top: 4px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.hero-meta {
+  margin-top: 4px;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.hero-count {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.hero-num {
+  font-size: 3.75rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.hero-word {
+  font-size: 2rem;
+}
+
+.hero-unit {
+  margin-top: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+/* Groups and rows */
+
 h2 {
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: #7a6668;
-  margin: 20px 0 8px;
+  margin: 22px 0 8px;
 }
 
-.count {
+.group-count {
   font-weight: 400;
 }
 
@@ -119,18 +198,19 @@ h2 {
   gap: 8px;
 }
 
-.card {
+.row {
   display: flex;
   gap: 12px;
-  align-items: flex-start;
-  padding: 12px;
+  align-items: center;
+  padding: 12px 14px 12px 12px;
   background: #fff;
   border: 1px solid #f1e3e0;
   border-radius: 14px;
+  color: inherit;
+  text-decoration: none;
 }
 
-.card-today {
-  border-color: #e8505b;
+.row-link:active {
   background: #fff1ef;
 }
 
@@ -147,16 +227,9 @@ h2 {
   font-size: 0.9rem;
 }
 
-.card-body {
+.row-body {
   flex: 1;
   min-width: 0;
-}
-
-.card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 8px;
 }
 
 .name {
@@ -164,17 +237,6 @@ h2 {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.when {
-  flex: none;
-  font-size: 0.8rem;
-  color: #7a6668;
-}
-
-.when-today {
-  color: #e8505b;
-  font-weight: 700;
 }
 
 .meta {
@@ -188,6 +250,49 @@ h2 {
   font-size: 0.85rem;
 }
 
+/* Countdown on each row */
+
+.count {
+  flex: none;
+  min-width: 52px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.count-num {
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.count-word {
+  font-size: 1rem;
+}
+
+.count-unit {
+  margin-top: 2px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #7a6668;
+}
+
+.count-soon .count-num {
+  color: #d92d3a;
+}
+
+.count-near .count-num {
+  color: #b86e00;
+}
+
+.count-far .count-num {
+  color: #2b1d1e;
+}
+
+/* Footer and notes */
+
 .empty,
 .skipped {
   text-align: center;
@@ -200,9 +305,67 @@ h2 {
   font-size: 0.8rem;
 }
 
-code {
-  font-size: 0.85em;
+.footer {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: #7a6668;
+  text-align: center;
 }
+
+/* Lock screen */
+
+.lock {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+
+.lock-card {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.lock-card img {
+  border-radius: 16px;
+}
+
+.lock-hint {
+  margin: 0 0 4px;
+  color: #7a6668;
+}
+
+.lock-error {
+  margin: 0;
+  color: #d92d3a;
+  font-size: 0.9rem;
+}
+
+.lock-remember {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+.lock-remember input {
+  width: 18px;
+  height: 18px;
+  accent-color: #e8505b;
+}
+
+/* Dark mode */
 
 @media (prefers-color-scheme: dark) {
   html,
@@ -211,25 +374,23 @@ code {
     color: #f5e9e8;
   }
   h1,
-  .when-today {
+  .link-btn {
     color: #ff7a82;
   }
   .subtitle,
   h2,
-  .when,
   .meta,
+  .count-unit,
   .empty,
-  .skipped {
+  .skipped,
+  .footer,
+  .lock-hint {
     color: #b8a4a5;
   }
   .btn {
     background: #ff7a82;
-    border-color: #ff7a82;
     color: #1c1415;
-  }
-  .btn-ghost {
-    background: transparent;
-    color: #ff7a82;
+    box-shadow: none;
   }
   .banner {
     background: #3a2426;
@@ -246,16 +407,29 @@ code {
   .search:focus {
     outline-color: #ff7a82;
   }
-  .card {
+  .hero {
+    background: linear-gradient(135deg, #c43c47, #d0694f);
+    box-shadow: none;
+  }
+  .row {
     background: #261b1c;
     border-color: #3d2c2e;
   }
-  .card-today {
-    background: #3a2023;
-    border-color: #ff7a82;
+  .row-link:active {
+    background: #33232a;
   }
   .avatar {
     background: #4a2a2d;
     color: #ffb3b8;
+  }
+  .count-soon .count-num,
+  .lock-error {
+    color: #ff6b75;
+  }
+  .count-near .count-num {
+    color: #f5b041;
+  }
+  .count-far .count-num {
+    color: #f5e9e8;
   }
 }

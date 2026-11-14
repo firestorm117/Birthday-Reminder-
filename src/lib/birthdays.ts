@@ -8,6 +8,8 @@ export interface Person {
   year: number | null; // null when unknown
   relation: string;
   notes: string;
+  /** Row number in the Google Sheet, used to open that row for editing. */
+  row: number;
 }
 
 export interface UpcomingBirthday extends Person {
@@ -19,6 +21,7 @@ export interface UpcomingBirthday extends Person {
 export interface ParseResult {
   people: Person[];
   skipped: string[]; // names (or row numbers) that could not be read
+  lastRow: number; // last non blank row in the sheet, so "Add" can open the next one
 }
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -93,22 +96,24 @@ export function toTitleCase(name: string): string {
 export function parsePeople(csvText: string): ParseResult {
   const people: Person[] = [];
   const skipped: string[] = [];
-  csvToRecords(csvText).forEach((rec, idx) => {
-    const name = toTitleCase(rec["name"] ?? "");
-    const date = parseBirthDate(rec["birth_date"] ?? "");
+  const { records, lastRow } = csvToRecords(csvText);
+  for (const { row, values } of records) {
+    const name = toTitleCase(values["name"] ?? "");
+    const date = parseBirthDate(values["birth_date"] ?? "");
     if (!name || !date) {
-      skipped.push(name || `row ${idx + 2}`);
-      return;
+      skipped.push(name || `row ${row}`);
+      continue;
     }
     people.push({
-      id: `${idx}-${name}`,
+      id: `${row}-${name}`,
       name,
       ...date,
-      relation: rec["relation"] ?? "",
-      notes: rec["notes"] ?? "",
+      relation: values["relation"] ?? "",
+      notes: values["notes"] ?? "",
+      row,
     });
-  });
-  return { people, skipped };
+  }
+  return { people, skipped, lastRow };
 }
 
 /** The day of the birthday in a given year. 29 Feb falls on 28 Feb in non leap years. */
@@ -142,29 +147,58 @@ export function sortByNext(people: Person[], today: Date): UpcomingBirthday[] {
     .sort((a, b) => a.daysUntil - b.daysUntil || a.name.localeCompare(b.name));
 }
 
-export interface MonthGroups {
-  thisMonth: UpcomingBirthday[];
-  nextMonth: UpcomingBirthday[];
-  later: UpcomingBirthday[];
+export interface Group {
+  key: string;
+  title: string;
+  items: UpcomingBirthday[];
 }
 
+const monthNameFmt = new Intl.DateTimeFormat(undefined, { month: "long" });
+
 /**
- * Splits birthdays (already sorted by next occurrence) into the rest of this
- * calendar month, next calendar month, and everything after. Birthdays earlier
- * this month have already passed, so they fall into "later" (next year).
+ * Groups birthdays (already sorted by next occurrence) for display:
+ * Today, This week (next 6 days), This month (rest of the calendar month),
+ * then one group per month. A month gets its year only when it is the
+ * current month next year, so "November 2027" is not confused with now.
+ * Only groups that have people are returned.
  */
-export function groupByMonth(items: UpcomingBirthday[], today: Date): MonthGroups {
-  const y = today.getFullYear();
-  const m = today.getMonth();
-  const nextY = m === 11 ? y + 1 : y;
-  const nextM = (m + 1) % 12;
-  const groups: MonthGroups = { thisMonth: [], nextMonth: [], later: [] };
+export function groupForDisplay(items: UpcomingBirthday[], today: Date): Group[] {
+  const ty = today.getFullYear();
+  const tm = today.getMonth();
+  const groups: Group[] = [];
+  const byKey = new Map<string, Group>();
   for (const b of items) {
     const by = b.nextDate.getFullYear();
     const bm = b.nextDate.getMonth();
-    if (by === y && bm === m) groups.thisMonth.push(b);
-    else if (by === nextY && bm === nextM) groups.nextMonth.push(b);
-    else groups.later.push(b);
+    let key: string;
+    let title: string;
+    if (b.daysUntil === 0) {
+      key = "today";
+      title = "Today";
+    } else if (b.daysUntil < 7) {
+      key = "week";
+      title = "This week";
+    } else if (by === ty && bm === tm) {
+      key = "month";
+      title = "This month";
+    } else {
+      key = `${by}-${bm}`;
+      title = monthNameFmt.format(b.nextDate) + (bm === tm ? ` ${by}` : "");
+    }
+    let g = byKey.get(key);
+    if (!g) {
+      g = { key, title, items: [] };
+      byKey.set(key, g);
+      groups.push(g);
+    }
+    g.items.push(b);
   }
   return groups;
+}
+
+/** How urgent a countdown is, for colouring. */
+export function urgency(daysUntil: number): "soon" | "near" | "far" {
+  if (daysUntil < 7) return "soon";
+  if (daysUntil < 30) return "near";
+  return "far";
 }

@@ -43,19 +43,37 @@ export function parseCsv(text: string): string[][] {
     row.push(field);
     rows.push(row);
   }
-  return rows.filter((r) => r.some((cell) => cell.trim() !== ""));
+  return rows;
 }
 
-/** Turns CSV rows into objects keyed by the lowercased header names. */
-export function csvToRecords(text: string): Record<string, string>[] {
-  const [header, ...body] = parseCsv(text);
-  if (!header) return [];
+function isBlank(row: string[]): boolean {
+  return row.every((cell) => cell.trim() === "");
+}
+
+export interface CsvRecord {
+  /** 1 based row number in the sheet (the header is row 1). */
+  row: number;
+  values: Record<string, string>;
+}
+
+/**
+ * Turns CSV rows into objects keyed by the lowercased header names.
+ * Blank rows are skipped but still counted, so `row` matches the sheet.
+ */
+export function csvToRecords(text: string): { records: CsvRecord[]; lastRow: number } {
+  const rows = parseCsv(text);
+  while (rows.length > 0 && isBlank(rows[rows.length - 1]!)) rows.pop();
+  const [header, ...body] = rows;
+  if (!header) return { records: [], lastRow: 0 };
   const keys = header.map((h) => h.trim().toLowerCase());
-  return body.map((cells) => {
-    const rec: Record<string, string> = {};
-    keys.forEach((k, idx) => {
-      rec[k] = (cells[idx] ?? "").trim();
+  const records: CsvRecord[] = [];
+  body.forEach((cells, idx) => {
+    if (isBlank(cells)) return;
+    const values: Record<string, string> = {};
+    keys.forEach((k, i) => {
+      values[k] = (cells[i] ?? "").trim();
     });
-    return rec;
+    records.push({ row: idx + 2, values });
   });
+  return { records, lastRow: rows.length };
 }

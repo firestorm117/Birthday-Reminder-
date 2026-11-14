@@ -1,17 +1,28 @@
 /**
- * Where the birthday list comes from.
+ * Where the birthday list comes from. Set these in Netlify under
+ * Project configuration > Environment variables, then redeploy:
  *
- * SHEET_CSV_URL: the link from Google Sheets "File > Share > Publish to web"
- * with the format set to CSV. Until you set it, the app shows sample data.
+ *   VITE_SHEET_CSV_URL   Google Sheets "Publish to web" link, format CSV
+ *   VITE_SHEET_EDIT_URL  the normal link to the sheet (enables Add and Edit)
+ *   APP_PASSWORD         password needed to open the app
  *
- * SHEET_EDIT_URL: the normal link to your sheet. The "Edit" button opens it.
- *
- * You can paste the links below, or set VITE_SHEET_CSV_URL and
- * VITE_SHEET_EDIT_URL as environment variables in Netlify.
+ * With APP_PASSWORD set, the links are encrypted at build time and never
+ * appear in plain text in the site's code. Without a CSV link the app shows
+ * sample data.
  */
-export const SHEET_CSV_URL: string =
-  import.meta.env.VITE_SHEET_CSV_URL || "/sample.csv";
+export const SHEET_CONFIG = __SHEET_CONFIG__;
 
-export const SHEET_EDIT_URL: string = import.meta.env.VITE_SHEET_EDIT_URL || "";
+export const SAMPLE_CSV_URL = "/sample.csv";
 
-export const USING_SAMPLE_DATA = SHEET_CSV_URL === "/sample.csv";
+/** Link that opens the sheet at a given row, or null when no edit link is set. */
+export function sheetRowLink(editUrl: string, csvUrl: string, row: number): string | null {
+  if (!editUrl) return null;
+  let gid = "0";
+  try {
+    gid = new URL(csvUrl, "https://example.invalid").searchParams.get("gid") ?? "0";
+  } catch {
+    // keep the default tab
+  }
+  const base = editUrl.split("#")[0]!.split("?")[0]!;
+  return `${base}#gid=${gid}&range=A${row}`;
+}

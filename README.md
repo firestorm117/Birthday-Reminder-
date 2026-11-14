@@ -17,16 +17,23 @@ A personal birthday list that installs on Android like an app. Built with React,
 3. File > Share > Publish to web. Choose the sheet tab, choose **Comma separated values (.csv)**, click Publish and copy the link.
 4. Anyone with that link can read the sheet. Keep it to names and dates; do not add phone numbers or addresses.
 
-## 2. Connect the sheet to the app
+## 2. Connect the sheet and set a password
 
-Either paste the links into `src/config.ts`, or (better) set them in Netlify under Site configuration > Environment variables:
+In Netlify, open the project, then Project configuration > Environment variables, and add:
 
 * `VITE_SHEET_CSV_URL`: the Publish to web CSV link
-* `VITE_SHEET_EDIT_URL`: the normal sheet link (shows an "Edit" button in the app)
+* `VITE_SHEET_EDIT_URL`: the normal sheet link (turns on **+ Add** and tap to edit)
+* `APP_PASSWORD`: the password needed to open the app
 
-Trigger a redeploy after adding them (Deploys > Trigger deploy > Deploy site). Until the CSV link is set, the app shows sample data.
+Trigger a redeploy after any change (Deploys > Trigger deploy > Deploy site). Until the CSV link is set, the app shows sample data.
 
-Keep the sheet's own sharing set to **Restricted**. The edit link is built into the public site, so link sharing with edit rights would let anyone change your list. Publish to web is separate and keeps working.
+Keep the sheet's own sharing set to **Restricted**. Publish to web is separate and keeps working.
+
+### How the password works
+
+During the build, the two sheet links are encrypted with a key derived from `APP_PASSWORD` (PBKDF2 and AES-GCM). The site only ships the encrypted blob, so without the password nobody can find out where your data lives. "Remember on this device" stores the derived key in the browser, so you type the password once per device. Changing `APP_PASSWORD` and redeploying logs every device out. "Lock this device" at the bottom of the list forgets the key and the saved data on that device.
+
+Limits: anyone who already knows the published CSV link can read it directly, with or without the password. Choose a password that is not easy to guess, because someone could copy the encrypted blob and try passwords offline.
 
 ## 3. Deploy on Netlify
 
@@ -40,7 +47,7 @@ Open the Netlify URL in Chrome, tap the menu, then "Install app" (or "Add to Hom
 
 ## Daily use
 
-Add or edit rows in the Google Sheets app. Reopen Birthday Book; it fetches fresh data each time it comes to the foreground (Google can take up to about 5 minutes to update the published CSV). Offline, it shows the last copy it saved.
+Tap **+ Add** to open the sheet at the next empty row, or tap a person to open their row. The app reloads the data when it opens, when you come back to it, when the network returns and every 5 minutes while open. Google can take up to about 5 minutes to update the published CSV, so a change may not show instantly. Offline, it shows the last copy it saved.
 
 ## Development
 
