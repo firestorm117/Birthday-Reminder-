@@ -5,7 +5,9 @@ const { chromium } = createRequire(import.meta.url)("playwright");
 import { readFileSync } from "node:fs";
 
 const svg = readFileSync("public/favicon.svg", "utf8");
-const full = svg.replace('rx="112"', 'rx="0"');
+const BG = "#FCEE0A";
+// Full bleed versions (maskable, Apple) replace the chamfered tile with a square.
+const full = svg.replace(/<path id="bg"[^>]*\/>/, `<rect width="512" height="512" fill="${BG}"/>`);
 
 const targets = [
   { file: "public/icons/icon-192.png", size: 192, src: svg, pad: 0 },
@@ -21,7 +23,7 @@ for (const t of targets) {
   const offset = Math.round(t.size * t.pad);
   await page.setViewportSize({ width: t.size, height: t.size });
   await page.setContent(
-    `<html><body style="margin:0;background:${t.src === svg ? "transparent" : "#E8505B"};width:${t.size}px;height:${t.size}px">
+    `<html><body style="margin:0;background:${t.src === svg ? "transparent" : BG};width:${t.size}px;height:${t.size}px">
       <div style="position:absolute;left:${offset}px;top:${offset}px;width:${inner}px;height:${inner}px">
         ${t.src.replace("<svg ", `<svg width="${inner}" height="${inner}" `)}
       </div></body></html>`,

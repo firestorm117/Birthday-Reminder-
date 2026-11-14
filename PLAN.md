@@ -120,6 +120,6 @@ If later you want true push reminders, the smallest step is a Netlify Scheduled 
 ## 7. Decisions made
 
 1. Storage: Google Sheet published as CSV.
-2. Name: Birthday Book. Accent color: coral `#E8505B`. Icon: a two tier cake.
+2. Name: Birthday Book. Theme: Acid Yellow (`#FCEE0A` on `#0B0B0C`, cyan and red accents), dark only. Icon: a two tier cake on a chamfered yellow tile.
 3. Google Calendar link: not in version 1.
 4. Stack: React and TypeScript.

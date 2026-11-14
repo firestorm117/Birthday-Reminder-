@@ -1,3 +1,5 @@
+/* Theme: Acid Yellow. Dark only by design. */
+
 * {
   box-sizing: border-box;
 }
@@ -5,10 +7,16 @@
 html,
 body {
   margin: 0;
-  background: #fff8f6;
-  color: #2b1d1e;
+  background: #0b0b0c;
+  color: #f2f2ee;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-image: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.02) 0 1px, transparent 1px 4px);
+  background-attachment: fixed;
+  min-height: 100vh;
 }
 
 .app {
@@ -29,35 +37,45 @@ body {
 
 h1 {
   margin: 0;
-  font-size: 1.6rem;
-  color: #e8505b;
-  letter-spacing: -0.01em;
+  font-family: ui-monospace, "JetBrains Mono", "Fira Code", "Roboto Mono", Menlo, Consolas, monospace;
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: #fcee0a;
+  text-shadow: 0 0 12px rgba(252, 238, 10, 0.45);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
 .subtitle {
   margin: 2px 0 0;
-  font-size: 0.85rem;
-  color: #7a6668;
+  font-family: ui-monospace, "JetBrains Mono", "Fira Code", "Roboto Mono", Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  color: #9a9a8a;
+  letter-spacing: 0.06em;
 }
 
 .btn {
   appearance: none;
   display: inline-block;
   border: 0;
-  background: #e8505b;
-  color: #fff;
+  background: #fcee0a;
+  color: #0b0b0c;
   font: inherit;
-  font-size: 1rem;
-  font-weight: 700;
+  font-family: ui-monospace, "JetBrains Mono", "Fira Code", "Roboto Mono", Menlo, Consolas, monospace;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   padding: 10px 18px;
-  border-radius: 999px;
+  border-radius: 2px;
   text-decoration: none;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(232, 80, 91, 0.3);
+  box-shadow: none;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
 }
 
 .btn:disabled {
-  opacity: 0.55;
+  opacity: 0.5;
   cursor: default;
 }
 
@@ -71,7 +89,7 @@ h1 {
   background: none;
   padding: 0;
   font: inherit;
-  color: #e8505b;
+  color: #00e5ff;
   text-decoration: underline;
   cursor: pointer;
 }
@@ -79,15 +97,16 @@ h1 {
 .banner {
   margin: 0 0 12px;
   padding: 10px 12px;
-  border-radius: 12px;
-  background: #ffe9e4;
-  color: #6b3a35;
+  border-radius: 4px;
+  background: #17170c;
+  border: 1px solid #2c2c22;
+  color: #e6e2a0;
   font-size: 0.85rem;
 }
 
 .banner-error {
-  background: #fdd;
-  color: #8a1c1c;
+  border-color: #ff003c;
+  color: #ff003c;
 }
 
 .search {
@@ -96,15 +115,20 @@ h1 {
   margin-bottom: 8px;
   font: inherit;
   font-size: 1rem;
-  border: 1px solid #ecd9d6;
-  border-radius: 12px;
-  background: #fff;
+  border: 1px solid #2c2c22;
+  border-radius: 4px;
+  background: #141416;
   color: inherit;
 }
 
+.search::placeholder {
+  color: #9a9a8a;
+}
+
 .search:focus {
-  outline: 2px solid #e8505b;
+  outline: 2px solid #00e5ff;
   outline-offset: 1px;
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.35);
 }
 
 /* Next up card */
@@ -116,11 +140,13 @@ h1 {
   gap: 16px;
   margin: 12px 0 8px;
   padding: 20px;
-  border-radius: 20px;
-  background: linear-gradient(135deg, #e8505b, #f08a6c);
-  color: #fff;
+  border-radius: 0;
+  background: #fcee0a;
+  border: 0;
+  color: #0b0b0c;
   text-decoration: none;
-  box-shadow: 0 8px 24px rgba(232, 80, 91, 0.28);
+  box-shadow: 0 0 30px rgba(252, 238, 10, 0.25);
+  clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 22px 100%, 0 calc(100% - 22px));
 }
 
 .hero-text {
@@ -128,10 +154,11 @@ h1 {
 }
 
 .hero-label {
+  font-family: ui-monospace, "JetBrains Mono", "Fira Code", "Roboto Mono", Menlo, Consolas, monospace;
   font-size: 0.75rem;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.16em;
   opacity: 0.85;
 }
 
@@ -158,10 +185,12 @@ h1 {
 }
 
 .hero-num {
+  font-family: ui-monospace, "JetBrains Mono", "Fira Code", "Roboto Mono", Menlo, Consolas, monospace;
   font-size: 3.75rem;
   font-weight: 800;
   line-height: 1;
   font-variant-numeric: tabular-nums;
+  text-shadow: none;
 }
 
 .hero-word {
@@ -170,23 +199,28 @@ h1 {
 
 .hero-unit {
   margin-top: 4px;
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-family: ui-monospace, "JetBrains Mono", "Fira Code", "Roboto Mono", Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
   opacity: 0.9;
 }
 
 /* Groups and rows */
 
 h2 {
-  font-size: 0.8rem;
+  font-family: ui-monospace, "JetBrains Mono", "Fira Code", "Roboto Mono", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #7a6668;
+  letter-spacing: 0.14em;
+  color: #00e5ff;
   margin: 22px 0 8px;
 }
 
 .group-count {
   font-weight: 400;
+  color: #9a9a8a;
 }
 
 .list {
@@ -203,28 +237,31 @@ h2 {
   gap: 12px;
   align-items: center;
   padding: 12px 14px 12px 12px;
-  background: #fff;
-  border: 1px solid #f1e3e0;
-  border-radius: 14px;
+  background: #141416;
+  border: 1px solid #2c2c22;
+  border-left: 3px solid #fcee0a;
+  border-radius: 4px;
   color: inherit;
   text-decoration: none;
 }
 
 .row-link:active {
-  background: #fff1ef;
+  background: #1e1e10;
 }
 
 .avatar {
   flex: none;
   width: 40px;
   height: 40px;
-  border-radius: 50%;
+  border-radius: 4px;
   display: grid;
   place-items: center;
-  background: #fbd5d3;
-  color: #a8323b;
-  font-weight: 700;
-  font-size: 0.9rem;
+  background: #1f1f05;
+  color: #fcee0a;
+  border: 1px solid #4a4710;
+  font-family: ui-monospace, "JetBrains Mono", "Fira Code", "Roboto Mono", Menlo, Consolas, monospace;
+  font-weight: 800;
+  font-size: 0.85rem;
 }
 
 .row-body {
@@ -233,7 +270,7 @@ h2 {
 }
 
 .name {
-  font-weight: 600;
+  font-weight: 700;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -242,7 +279,7 @@ h2 {
 .meta {
   margin-top: 2px;
   font-size: 0.85rem;
-  color: #7a6668;
+  color: #9a9a8a;
 }
 
 .notes {
@@ -262,6 +299,7 @@ h2 {
 }
 
 .count-num {
+  font-family: ui-monospace, "JetBrains Mono", "Fira Code", "Roboto Mono", Menlo, Consolas, monospace;
   font-size: 1.5rem;
   font-weight: 800;
   line-height: 1;
@@ -269,26 +307,32 @@ h2 {
 }
 
 .count-word {
-  font-size: 1rem;
+  font-size: 0.95rem;
+  text-transform: uppercase;
 }
 
 .count-unit {
   margin-top: 2px;
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: #7a6668;
+  font-family: ui-monospace, "JetBrains Mono", "Fira Code", "Roboto Mono", Menlo, Consolas, monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9a9a8a;
 }
 
 .count-soon .count-num {
-  color: #d92d3a;
+  color: #ff003c;
+  text-shadow: 0 0 10px rgba(255, 0, 60, 0.6);
 }
 
 .count-near .count-num {
-  color: #b86e00;
+  color: #ff9f1c;
+  text-shadow: none;
 }
 
 .count-far .count-num {
-  color: #2b1d1e;
+  color: #f2f2ee;
 }
 
 /* Footer and notes */
@@ -296,7 +340,7 @@ h2 {
 .empty,
 .skipped {
   text-align: center;
-  color: #7a6668;
+  color: #9a9a8a;
   font-size: 0.9rem;
   margin-top: 32px;
 }
@@ -311,8 +355,9 @@ h2 {
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  font-size: 0.8rem;
-  color: #7a6668;
+  font-family: ui-monospace, "JetBrains Mono", "Fira Code", "Roboto Mono", Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  color: #9a9a8a;
   text-align: center;
 }
 
@@ -337,17 +382,18 @@ h2 {
 }
 
 .lock-card img {
-  border-radius: 16px;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .lock-hint {
   margin: 0 0 4px;
-  color: #7a6668;
+  color: #9a9a8a;
 }
 
 .lock-error {
   margin: 0;
-  color: #d92d3a;
+  color: #ff003c;
   font-size: 0.9rem;
 }
 
@@ -362,74 +408,5 @@ h2 {
 .lock-remember input {
   width: 18px;
   height: 18px;
-  accent-color: #e8505b;
-}
-
-/* Dark mode */
-
-@media (prefers-color-scheme: dark) {
-  html,
-  body {
-    background: #1c1415;
-    color: #f5e9e8;
-  }
-  h1,
-  .link-btn {
-    color: #ff7a82;
-  }
-  .subtitle,
-  h2,
-  .meta,
-  .count-unit,
-  .empty,
-  .skipped,
-  .footer,
-  .lock-hint {
-    color: #b8a4a5;
-  }
-  .btn {
-    background: #ff7a82;
-    color: #1c1415;
-    box-shadow: none;
-  }
-  .banner {
-    background: #3a2426;
-    color: #f2cfcc;
-  }
-  .banner-error {
-    background: #4a1f1f;
-    color: #ffc9c9;
-  }
-  .search {
-    background: #261b1c;
-    border-color: #3d2c2e;
-  }
-  .search:focus {
-    outline-color: #ff7a82;
-  }
-  .hero {
-    background: linear-gradient(135deg, #c43c47, #d0694f);
-    box-shadow: none;
-  }
-  .row {
-    background: #261b1c;
-    border-color: #3d2c2e;
-  }
-  .row-link:active {
-    background: #33232a;
-  }
-  .avatar {
-    background: #4a2a2d;
-    color: #ffb3b8;
-  }
-  .count-soon .count-num,
-  .lock-error {
-    color: #ff6b75;
-  }
-  .count-near .count-num {
-    color: #f5b041;
-  }
-  .count-far .count-num {
-    color: #f5e9e8;
-  }
+  accent-color: #fcee0a;
 }
